@@ -1,0 +1,456 @@
+import React, { useEffect, useState } from "react";
+import Select from "react-select";
+import { useSearchParams } from "react-router-dom";
+import Header from "../../../../../../Components/Header/Header";
+import Sidebar from "../../../../../../Components/Sidebar/Sidebar";
+import ReactHTMLTableToExcel from "react-html-table-to-excel";
+import { useAuthState } from "../../../../../../Helper/Context";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  DesignationDDLAPI,
+  DistrictNameDDLAPI,
+  EmployeeDDLAPI,
+  MonthDDLAPI,
+  TalukaNameDDLAPI,
+} from "../../../../../../Redux/DDLSlice";
+import { MonthDataDDL } from "../../../../../../Components/CommonDDL/MonthDataDDL";
+import { DistrictNameDataDDL } from "../../../../../../Components/CommonDDL/DistrictNameDataDDL";
+import { TalukaNameDataDDL } from "../../../../../../Components/CommonDDL/TalukaNameDataDDL";
+import { DesignationNameDataDDL } from "../../../../../../Components/CommonDDL/DesignationNameDataDDL";
+import { WithWithoutLeaveTableDataAPI } from "../../../../../../Redux/DashboardSlice/WithWithoutLeaveSlice";
+import moment from 'moment'
+import { Loading } from "../../../../../../Helper/Loading";
+import { Pegination } from "../../../../../../Components/Pegination/Pegination";
+
+export default function MonthlyTotalAbsent() {
+  const [searchParams] = useSearchParams();
+  let searchName = searchParams.get("name");
+  const [ScreenName, setScreenName] = useState(searchName);
+  const [PerPageCount, setPerPageCount] = useState(10)
+  const [YearValue, setYearValue] = useState(0)
+  const [To, setTo] = useState(10)
+  const [From, setFrom] = useState(1)
+  const [rowNo, setrowNo] = useState(1)
+  const [IsSearch, setIsSearch] = useState(false)
+  const [IsClear, setIsClear] = useState(false)
+  const [IsPost, setIsPost] = useState(false)
+  const [CurrentPage, setCurrentPage] = useState(0)
+
+  const userDetails = useAuthState();
+  const { UserID, token } = userDetails;
+  const dispatch = useDispatch();
+
+  const [DesigDDL, setDesigDDL] = useState({
+    DDL: [],
+    ID: 0,
+    Label: "Select...",
+  });
+  const [EmpDDL, setEmpDDL] = useState({
+    DDL: [],
+    ID: 0,
+    Label: "Select...",
+  });
+  const [DistrictDDL, setDistrictDDL] = useState({
+    DDL: [],
+    ID: 0,
+    Label: "Select...",
+  });
+  const [TalukaDDL, setTalukaDDL] = useState({
+    DDL: [],
+    ID: 0,
+    Label: "Select...",
+  });
+  const [MonthDDL, setMonthDDL] = useState({
+    DDL: [],
+    ID: 0,
+    Label: "Select...",
+  });
+
+  useEffect(() => {
+    const data = { UserID, token };
+    dispatch(DesignationDDLAPI({ data }));
+  }, []);
+  useEffect(() => {
+    const data = { UserID, token, DesigDDL };
+    dispatch(EmployeeDDLAPI({ data, Flag: "Master" }));
+  }, []);
+  useEffect(() => {
+    const data = { UserID, token };
+    dispatch(DistrictNameDDLAPI({ data }));
+  }, []);
+  useEffect(() => {
+    const data = { UserID, token };
+    dispatch(TalukaNameDDLAPI({ data }));
+  }, []);
+  useEffect(() => {
+    const data = { UserID, token };
+    dispatch(MonthDDLAPI({ data }));
+  }, []);
+
+  const { DesigDDLData } = useSelector((state) => state.DesignationDDLData);
+  const { EmployeeDDLData } = useSelector((state) => state.EmployeeDDLData);
+  const { DistrictDDLData } = useSelector((state) => state.DistrictNameDDL);
+  const { TalukaDDLData } = useSelector((state) => state.TalukaNameDDL);
+  const { MonthData } = useSelector((state) => state.MonthDDLData);
+
+  useEffect(() => {
+    handleEmployeeDDL();
+  }, [EmployeeDDLData]);
+
+  const handleEmployeeDDL = () => {
+    if (
+      EmployeeDDLData &&
+      EmployeeDDLData.table &&
+      EmployeeDDLData.table.length > 0
+    ) {
+      let list = EmployeeDDLData.table.map((item, index) => ({
+        value: item.id,
+        label: item.employeeName,
+      }));
+
+      setEmpDDL({
+        DDL: list,
+        ID: 0,
+        Label: "Select...",
+      });
+    } else {
+      setEmpDDL({
+        DDL: [],
+        ID: 0,
+        Label: "Select...",
+      });
+    }
+  };
+
+  const handleClearButton = () => {
+    setCurrentPage(0)
+    setDesigDDL({
+      ...DesigDDL,
+      ID: 0,
+      Label: "Select...",
+    });
+    setEmpDDL({
+      ...EmpDDL,
+      ID: 0,
+      Label: "Select...",
+    });
+    setDistrictDDL({
+      ...DistrictDDL,
+      ID: 0,
+      Label: "Select...",
+    });
+    setTalukaDDL({
+      ...TalukaDDL,
+      ID: 0,
+      Label: "Select...",
+    });
+    setMonthDDL({
+      ...MonthDDL,
+      ID: 0,
+      Label: "Select...",
+    });
+  };
+
+  useEffect(() => {
+    const data = {
+      FinancialYearID: YearValue,
+      MonthID: MonthDDL.ID,
+      M_StateNameID: 0,
+      M_DistrictNameID: DistrictDDL.ID,
+      M_TalukaNameID: TalukaDDL.ID,
+      M_DepartmentID: 0,
+      M_EmployeeID: EmpDDL.ID,
+      M_StatusID: 0,
+      UserID: UserID,
+      token,
+      From,
+      To,
+    }
+    if (ScreenName === 'With Leave') {
+      if (YearValue !== 0) {
+      dispatch(WithWithoutLeaveTableDataAPI({
+        data, Flag: "WithLeave",
+        ShowBy: "Monthly"
+      }))
+    }
+    }
+    else if(ScreenName === 'Without Leave'){
+      if (YearValue !== 0) {
+      dispatch(WithWithoutLeaveTableDataAPI({
+        data, Flag: "WithoutLeave",
+        ShowBy: "Monthly"
+      }))
+    }
+    }
+
+
+  }, [From, IsSearch, IsClear, IsPost, ScreenName,YearValue])
+
+  const { tableData, isLoading } = useSelector(state => state.WithWithoutLeaveTableData)
+
+
+  return (
+    <>
+    {isLoading && <Loading />}
+      <main className="main-content position-relative border-radius-lg ">
+        <Header setYearValue={setYearValue} />
+        <Sidebar />
+        <div id="wrapper">
+          <div id="page-content-wrapper">
+            <div className="container-fluid xyz">
+              <div className="row mt_40">
+                <div className="row mt-5">
+                  <div className="col-md-12 grid-margin">
+                    <div className="row page-heading">
+                      <div className="col-12 col-lg-8 mb-xl-0 align-self-center align-items-center">
+                        <h4 className="fontStyle">{`Attendance -> ${searchName}`}</h4>
+                      </div>
+                      <div className="col-12 col-lg-4 mb-xl-0">
+                        <ReactHTMLTableToExcel
+                          id="test-table-xls-button"
+                          className="download-table-xls-button float-end btn btn-export btn-md pt-1 pb-1 pl-3 pr-3"
+                          table="total-absent"
+                          filename="data"
+                          sheet="data"
+                          pageOrientation="Landscape"
+                          buttonText="Export"
+                          style={{ borderColor: "black" }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col-12 shadow table-card mt-1 mx-2">
+                    <div className="filter mb-2 mt-2">
+                      <div className="card-body">
+                        <div className="filter-bg p-2">
+                          <div className="row">
+                            <div className="col-md-6 col-lg-3">
+                              <MonthDataDDL
+                                MonthDDL={MonthDDL}
+                                setMonthDDL={setMonthDDL}
+                                MonthData={MonthData}
+                              />
+                            </div>
+                            <div className="col-md-6 col-lg-3">
+                              <div className="form-group">
+                                <label
+                                  className="d-block"
+                                  htmlFor="NameofDepartment"
+                                >
+                                  From Date
+                                </label>
+                                <input
+                                  className="form-control"
+                                  id="Date"
+                                  type="date"
+                                  name="Date"
+                                />
+                              </div>
+                            </div>
+                            <div className="col-md-6 col-lg-3">
+                              <div className="form-group">
+                                <label
+                                  className="d-block"
+                                  htmlFor="NameofDepartment"
+                                >
+                                  To Date
+                                </label>
+                                <input
+                                  className="form-control"
+                                  id="Date"
+                                  type="date"
+                                  name="Date"
+                                />
+                              </div>
+                            </div>
+                            <div className="col-md-6 col-lg-3">
+                              <DistrictNameDataDDL
+                                DistrictDDL={DistrictDDL}
+                                setDistrictDDL={setDistrictDDL}
+                                DistrictDDLData={DistrictDDLData}
+                              />
+                            </div>
+                            <div className="col-md-6 col-lg-3">
+                              <TalukaNameDataDDL
+                                TalukaDDL={TalukaDDL}
+                                setTalukaDDL={setTalukaDDL}
+                                TalukaDDLData={TalukaDDLData}
+                              />
+                            </div>
+                            <div className="col-md-6 col-lg-3">
+                              <DesignationNameDataDDL
+                                DesigDDL={DesigDDL}
+                                setDesigDDL={setDesigDDL}
+                                DesigDDLData={DesigDDLData}
+                              />
+                            </div>
+                            <div className="col-md-6 col-lg-3">
+                              <div className="form-group">
+                                <label
+                                  className="d-block"
+                                  htmlFor="NameofDepartment"
+                                >
+                                  Employee Name
+                                </label>
+                                <Select
+                                  isClearable
+                                  // isRtl={isRtl}
+                                  isSearchable
+                                  maxMenuHeight={150}
+                                  value={{
+                                    value: EmpDDL.ID,
+                                    label: EmpDDL.Label,
+                                  }}
+                                  onChange={(e) => {
+                                    e
+                                      ? setEmpDDL({
+                                          ...EmpDDL,
+                                          ID: e.value,
+                                          Label: e.label,
+                                        })
+                                      : setEmpDDL({
+                                          ...EmpDDL,
+                                          ID: 0,
+                                          Label: "Select...",
+                                        });
+                                  }}
+                                  options={EmpDDL.DDL}
+                                />
+                              </div>
+                            </div>
+                            <div className="col-md-6 col-lg-3">
+                              <div className="form-group">
+                                <label
+                                  className="d-block"
+                                  htmlFor="NameofDepartment"
+                                >
+                                  Mobile Number
+                                </label>
+                                <input
+                                  className="form-control"
+                                  id="Date"
+                                  type="text"
+                                  name="Date"
+                                />
+                              </div>
+                            </div>
+
+                            <div className="col-12 col-lg-9 text-start m-auto">
+                              <button
+                                type="button"
+                                className="btn btn-clear text-white mr-2 mt-4 mt-md-0 mx-2 mt-lg-4 waves-effect waves-light allBtn"
+                                onClick={handleClearButton}
+                              >
+                                Clear
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="table-responsive ">
+                      <table
+                        id="total-absent"
+                        cellPadding="0"
+                        cellSpacing="0"
+                        border="0"
+                        className="table table-bordered"
+                      >
+                        <thead>
+                          <tr>
+                            <th style={{ textAlign: "center", width: "10%" }}>
+                              Sr.No.
+                            </th>
+                            <th>Month</th>
+                            <th>District </th>
+                            <th>Taluka</th>
+                            <th>Department </th>
+                            <th>Employee Code </th>
+                            <th>Employee Name</th>
+                            <th>Designation</th>
+                            <th>Mobile Number</th>
+                            <th>From Date</th>
+                            <th>To Date</th>
+                            <th>Total Leaves Days</th>
+                            {searchName === "With Leave" ? (
+                              <th>Leave Reason</th>
+                            ) : (
+                              <></>
+                            )}
+                          </tr>
+                        </thead>
+                        <tbody>
+                        {
+                              tableData && tableData.table && tableData.table.length > 0 ? tableData.table.map((item, i) => (
+                                <tr key={i} style={{ textAlign: "center" }}>
+                                  <td>{item.rowNum ? item.rowNum : "-"}</td>
+                                  <td>-</td>
+                                  <td>{item.districtName ? item.districtName : "-"}</td>
+                                  <td>{item.talukaName ? item.talukaName : "-"}</td>
+                                  <td>{item.departmentName ? item.departmentName : "-"}</td>
+                                  <td>-</td>
+                                  <td>{item.employeeName ? item.employeeName : "-"}</td>
+                                  <td>{item.designationName ? item.designationName : "-"}</td>
+                                  <td>{item.mobileNumber ? item.mobileNumber : "-"}</td>
+                                  <td>{item.fromDate ? moment(item.fromDate).format("DD-MM-YYYY") : "-"}</td>
+                                  <td>{item.toDate ?  moment(item.toDate).format("DD-MM-YYYY") : "-"}</td>
+                                  <td>{item.totalLeaveDays ? item.totalLeaveDays : "-"}</td>
+                                  <td>{item.leaveReason ? item.leaveReason : "-"}</td>
+
+
+                                  {/* <td>
+                                  <span className='tableIcon'
+                                    onClick={() => imageButtonClick(item.plotPhoto)}
+                                  >
+                                    <i className="fa fa-picture-o" aria-hidden="true"></i>
+                                  </span>
+                                </td> */}
+                                  {/* <td>
+                                                                    <span className='tableIcon'
+                                                                        onClick={() => videoButtonClick(item.plotPhoto)}
+                                                                    >
+                                                                        <i className="fa fa-file-video-o" aria-hidden="true"></i>
+                                                                    </span>
+                                                                </td> */}
+                                  {/* <td align='center'>
+                                  <span className='tableIcon'
+                                    onClick={() => editButtonClick(item)}
+                                  >
+                                    <i className="fa fa-pencil-square-o" aria-hidden="true"></i>
+                                  </span> */}
+                                  {/* <span className='tableIcon'
+                                                                onClick={() => deleteButtonClick()}
+                                                            >
+                                                                <i className="fa fa-trash-o text-danger" aria-hidden="true"></i>
+                                                            </span> */}
+                                  {/* </td> */}
+
+                                </tr>
+                              )) : <tr>No data</tr>
+                          }
+                        </tbody>
+                      </table>
+                    </div>
+                    {tableData && tableData.table && tableData.table.length > 0 &&
+                      <Pegination
+                        PerPageCount={PerPageCount}
+                        TotalCount={tableData.table[0].totalCount}
+                        setFrom={setFrom}
+                        setTo={setTo}
+                        setrowNo={setrowNo}
+                        CurrentPage={CurrentPage}
+                        setCurrentPage={setCurrentPage}
+                      />
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </>
+  );
+}

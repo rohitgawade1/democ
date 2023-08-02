@@ -1,0 +1,187 @@
+body{
+    font-family: 'Noto Sans', sans-serif;
+font-family: 'Poppins', sans-serif;
+font-size: 13px;
+}
+.new_sidebar{
+    /* border-radius: 0px !important; */
+}
+.new_sidebar{
+    background-color: #172b4d !important;
+}
+.navbar-brand-img{
+    /* width: 100px;
+    text-align: center;
+    margin: auto */
+}
+.header_new{
+    background-color: white;
+    color: rgb(2, 1, 1);
+    border-radius: 10px;
+}
+.heading{
+    text-shadow: 0.2px 0.3px #FF0000;
+    font-weight:bolder;
+    font-size: 20px;
+    color: #0c007d;
+    word-spacing: 1;
+    /* font-style: italic; */
+    /* letter-spacing: 1; */
+}
+.nav-link-text{
+    font-size: 14px;
+    font-weight: 300px !important;
+    /* letter-spacing: px !important; */
+}
+.card_text{
+    color:#26262794 !important;
+    font-size: 13px !important;
+}
+.material_stock{
+    background-color: rgb(255, 255, 255);
+    height: 108px !important;
+    
+}
+.Attendance{
+    background-color: rgb(255, 255, 255);
+    height: 110px !important;
+    
+}
+.dc_store{
+    background-color: rgb(255, 255, 255);
+    height: 128px !important;
+}
+.card_big{
+    background-color: #fdf4dc;
+    padding: 0px 20px 50px 20px !important;
+}
+.card_big2{
+    background-color: #ffffff;
+    padding: 0px 20px 50px 20px !important;
+    box-shadow: 3px 3px 10px rgba(0, 30, 87, 0.751);
+}
+.card_big3{
+    background-color: #ffffff;
+    padding: 0px 20px 01px 20px !important;
+    box-shadow: 3px 3px 10px rgba(0, 30, 87, 0.751);
+}
+.visits_btn{
+    font-size: 13px;
+    font-weight: 100;
+    background-color: #5e72e4;
+    color: white;
+    border: 1px solid #0c007dbd !important;
+}
+.border_left{
+    /* border-right: 2px solid #0c007dbd !important; */
+    border: 1px solid #0c007d46 !important;
+    background-color: rgb(177, 239, 250);
+    border-radius: 10px;
+}
+.target{
+    background-color: #5e72e4;
+    padding: 7px 10px;
+    margin-top: 50px;
+    color: rgb(255, 255, 255);
+    margin: 0px 10px !important;
+    border-radius: 07px;
+    margin: auto;
+}
+#myChart{
+    width: 350px !important;
+    height: 350px !important;
+    margin: auto;
+}
+.presenty{
+    border: 2px solid red;
+    border-radius: 10px;
+    background-color: rgb(121 121 118);
+    box-shadow: 3px 3px 10px rgba(0, 30, 87, 0.751);
+    margin-top: -117px;
+}
+.presenty_btn{
+    padding: 10px 30px !important;
+}
+.navbar_new{
+    background: white !important;
+    position: fixed !important;
+    z-index: 100 !important;
+    width: 100vw !important;
+    margin-left: -5px;
+    box-shadow: 3px 3px 10px rgba(0, 30, 87, 0.751) !important;
+}
+.navbar-brand{
+    background-color: white;
+    box-shadow: 3px 3px 10px rgba(0, 30, 87, 0.751) !important;
+}
+.dashboard_pd{
+    margin-top: 90px !important;
+}
+
+
+#main	{
+	width: 500px !important;
+	height: 350px !important;
+    
+}
+#mains	{
+	width: 500px !important;
+	height: 350px !important;
+    
+}
+.borders{
+    border-radius: 15px;
+    border: 2px solid rgba(156, 82, 82, 0.452);
+    /* box-shadow: 3px 3px 10px rgba(0, 30, 87, 0.751); */
+    /* margin-top: -117px; */
+}
+.right_borders{
+    border-right: 2px solid rgba(156, 82, 82, 0.452);
+}
+.all_icons img{
+    width: 40px !important;
+    height: auto !important;
+}
+#barChart{
+    height: 300px !important;
+}
+.text-darks{
+    color: #0c007d !important;
+    border: 1px solid !important;
+}#barChart2{
+    height: 350px !important;
+}
+.bar_new{
+    font-size: 20px;
+    /* background-color: #5e72e4; */
+    padding: 10px;
+    color: rgb(0, 0, 0);
+    border-radius: 5px;
+}
+@media (min-width: 992px){
+.dropdown:not(.dropdown-hover) .dropdown-menu {
+    margin-top: 0px !important;
+    margin: 0px 10px 10px 10px;
+    padding: 10px 10px 50px 40px !important;
+}
+.dropdown .dropdown-toggle:after, .dropup .dropdown-toggle:after, .dropstart .dropdown-toggle:after, .dropend .dropdown-toggle:after {
+    transition: 0.3s ease;
+    padding: 0px 35px !important;
+}
+}
+.text_white{
+    color: white !important;
+    font-weight: normal;
+}
+.btn2{
+    box-shadow: none !important;
+
+}
+.sont_size{
+    font-size: 13px !important;
+    color: black !important;
+}
+
+.toggled{
+    display: none !important;
+}

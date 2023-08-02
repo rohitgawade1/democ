@@ -1,0 +1,11 @@
+@media only screen and (max-width: 426px) {
+    .attendence-container, .pd-btm{
+        /* padding: 0 10px !important */
+        padding-bottom: 1rem !important;
+    }
+    .invoice-cr-admin{
+        padding-bottom: 1rem !important;
+
+        /*  */
+    }
+  }
